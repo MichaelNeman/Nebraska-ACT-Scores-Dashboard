@@ -3,6 +3,7 @@ library(shinydashboard)
 library(ggplot2)
 library(scales)
 library(ggmap)
+library(maps)
 library(tidyr)
 library(dplyr)
 library(shiny)
@@ -18,10 +19,10 @@ library(plotly)
 #file_act_2021 = "https://nep.education.ne.gov/Downloads/20202021/ACT_Composite_20202021.csv"
 #file_act_1819 = "https://nep.education.ne.gov/Downloads/20182019/ACT_Composite_20182019.csv"
 #file_act_1718 = "https://nep.education.ne.gov/Downloads/20172018/ACT_Composite_20172018.csv"
-act_2122 = read.csv("ACT_Composite_20212022.csv", header=TRUE)
-act_2021 = read.csv("ACT_Composite_20202021.csv", header=TRUE)
-act_1819 = read.csv("ACT_Composite_20182019.csv", header=TRUE)
-act_1718 = read.csv("ACT_Composite_20172018.csv", header=TRUE)
+act_2122 = read.csv("data/ACT_Composite_20212022.csv", header=TRUE)
+act_2021 = read.csv("data/ACT_Composite_20202021.csv", header=TRUE)
+act_1819 = read.csv("data/ACT_Composite_20182019.csv", header=TRUE)
+act_1718 = read.csv("data/ACT_Composite_20172018.csv", header=TRUE)
 ### remove 'data as of' column (which does not exist in 17-18 and 18-19 school years)
 act_2122 = act_2122[,-10]
 act_2021 = act_2021[,-10]
@@ -57,10 +58,10 @@ act_county_mean$datayears = as.character(act_county_mean$datayears)
 ##########################################################
 
 ### bring in Per Pupil Expenditure
-file_ppe_2021 = "https://nep.education.ne.gov/Downloads/20202021/Per_Pupil_Expenditures_20202021.csv"
-file_ppe_1819 = "https://nep.education.ne.gov/Downloads/20182019/Per_Pupil_Expenditures_20182019.csv"
-ppe_2021 = read.csv(file_ppe_2021,header=TRUE)
-ppe_1819 = read.csv(file_ppe_1819,header=TRUE)
+#file_ppe_2021 = "https://nep.education.ne.gov/Downloads/20202021/Per_Pupil_Expenditures_20202021.csv"
+#file_ppe_1819 = "https://nep.education.ne.gov/Downloads/20182019/Per_Pupil_Expenditures_20182019.csv"
+ppe_2021 = read.csv("data/Per_Pupil_Expenditures_20202021.csv",header=TRUE)
+ppe_1819 = read.csv("data/Per_Pupil_Expenditures_20182019.csv",header=TRUE)
 
 ### remove 'data as of' column
 ppe_2021 = ppe_2021[,-14]
@@ -104,7 +105,7 @@ for(i in 1:nrow(act_ppe_NARM)){
 }
 
 ### melting data so all expenditure types are now factors
-act_ppe_select = pivot_longer(act_ppe_NARM,c(5:11),names_to="expenditure","amount")
+act_ppe_select = pivot_longer(act_ppe_NARM,c(5:11),names_to="expenditure", values_to = "amount")
 
 ### loading in NE county boundaries for mapping
 mdat = map_data("county") %>% filter(region == "nebraska")
@@ -117,10 +118,10 @@ correlation = round(cor(act_ppe_NARM[,c(5,6,7,8,9,10,11,14)]),3)
 ###################################################################
 
 ### bring in data for ACT_all_subjects
-act_score2021=read.csv("https://nep.education.ne.gov/Downloads/20202021/ACT_AllSubjects_20202021.csv")
-act_score2019=read.csv("https://nep.education.ne.gov/Downloads/20182019/ACT_AllSubjects_20182019.csv")
-act_score2018=read.csv("https://nep.education.ne.gov/Downloads/20172018/ACT_AllSubjects_20172018.csv")
-act_score2017=read.csv("https://nep.education.ne.gov/Downloads/20162017/ACT_AllSubjects_20162017.csv")
+act_score2021=read.csv("data/ACT_AllSubjects_20202021.csv")
+act_score2019=read.csv("data/ACT_AllSubjects_20182019.csv")
+act_score2018=read.csv("data/ACT_AllSubjects_20172018.csv")
+act_score2017=read.csv("data/ACT_AllSubjects_20162017.csv")
 
 ### select only unique/distinct rows
 act_score2021=act_score2021%>% distinct(.keep_all=TRUE)
@@ -167,7 +168,7 @@ racebased["Datayears"][racebased["Datayears"] == 20162017] <- "2016-2017"
 #################################################################
 
 
-AR<-read.csv("https://nep.education.ne.gov/Downloads/20202021/Attendance_Rate_20202021.csv")
+AR<-read.csv("data/Attendance_Rate_20202021.csv")
 AR1=as.data.frame(AR)
 AR2<-AR1[,c("School.Year","School","District","Agency.Name","Attendance.Rate")]
 AR3<-subset(AR2,School == "1")
